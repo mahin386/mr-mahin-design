@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mr. Mahin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+background:#0d0d0d;
+color:white;
+
+}
+
+header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px;
+
+border-bottom:1px solid #222;
+
+position:sticky;
+top:0;
+background:#0d0d0d;
+z-index:999;
+
+}
+
+.logo{
+
+font-size:22px;
+font-weight:700;
+
+}
+
+.logo span{
+
+color:#c6ff00;
+
+}
+
+.admin{
+
+padding:10px 18px;
+
+border:2px solid #c6ff00;
+
+color:#c6ff00;
+
+border-radius:40px;
+
+cursor:pointer;
+
+}
+
+.hero{
+
+padding:60px 20px;
+
+text-align:center;
+
+}
+
+.hero h1{
+
+font-size:52px;
+
+}
+
+.hero p{
+
+font-size:22px;
+
+margin-top:10px;
+
+color:#aaa;
+
+}
+
+.gallery{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:18px;
+
+padding:20px;
+
+}
+
+.gallery img{
+
+width:100%;
+
+border-radius:18px;
+
+display:block;
+
+}
+
+.buttons{
+
+padding:25px;
+
+}
+
+.btn{
+
+display:block;
+
+text-decoration:none;
+
+text-align:center;
+
+padding:18px;
+
+border-radius:50px;
+
+margin-bottom:18px;
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+
+.whatsapp{
+
+background:#c6ff00;
+
+color:black;
+
+}
+
+.telegram{
+
+border:2px solid #333;
+
+color:white;
+
+}
+
+footer{
+
+text-align:center;
+
+padding:40px;
+
+color:#666;
+
+}
+
+@media(max-width:700px){
+
+.hero h1{
+
+font-size:40px;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+Mr. Mahin'<span>Design</span>
+
+</div>
+
+<div class="admin" onclick="window.location.href='admin.html'">
+ADMIN PANEL
+</div>
+
+</header>
+
+<section class="hero">
+
+<h1>Mr. Mahin</h1>
+
+<p>Digital Marketer & AI Artist</p>
+
+</section>
+
+<div class="gallery" id="gallery">
+
+</div>
+
+<div class="buttons">
+
+<a href="https://wa.me/8801602336111" class="btn whatsapp">
+
+WHATSAPP
+
+</a>
+
+<a href="#" class="btn telegram">
+
+TELEGRAM
+
+</a>
+
+</div>
+
+<footer>
+
+© MR MAHIN
+
+</footer>
+
+    <!-- Firebase App -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+// 🔥 তোমার Firebase config (এখানে তোমারটা বসাবে)
+const firebaseConfig = {
+  apiKey: "AIzaSyAfdJVME0RchNtfkSTXX2X-03_9nnd4hvM",
+  authDomain: "mr-mahin-design.firebaseapp.com",
+  projectId: "mr-mahin-design",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+// 🖼️ Gallery load function
+function loadImages(){
+  db.collection("images")
+    .orderBy("time","desc")
+    .onSnapshot(snapshot => {
+
+      let gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        let img = document.createElement("img");
+        img.src = doc.data().url;
+        gallery.appendChild(img);
+      });
+
+    });
+}
+
+loadImages();
+</script>
+</body>
+</html>
