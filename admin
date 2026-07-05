@@ -1,0 +1,249 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+    background:#111;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:95%;
+    max-width:400px;
+    background:#1d1d1d;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#c6ff00;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#panel{
+    display:none;
+}
+
+#status{
+    margin-top:15px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Admin Login</h2>
+
+<div id="loginBox">
+
+<input
+type="password"
+id="password"
+placeholder="Enter Password">
+
+<button onclick="login()">
+Login
+</button>
+
+</div>
+
+<div id="panel">
+
+<h3>Upload Image</h3>
+
+<input
+type="file"
+id="file"
+accept="image/*">
+
+<button onclick="uploadImage()">
+Upload Image
+</button>
+
+<p id="status"></p>
+
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAfdJVME0RchNtfkSTXX2X-03_9nnd4hvM",
+  authDomain: "mr-mahin-design.firebaseapp.com",
+  projectId: "mr-mahin-design",
+  storageBucket: "mr-mahin-design.firebasestorage.app",
+  messagingSenderId: "1461563320",
+  appId: "1:1461563320:web:150fdc92a4e7662585e94d",
+  measurementId: "G-8FJVMZB9JE"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+const ADMIN_PASSWORD = "4505";
+
+function login(){
+
+    let pass=document.getElementById("password").value;
+
+    if(pass===ADMIN_PASSWORD){
+
+        document.getElementById("loginBox").style.display="none";
+        document.getElementById("panel").style.display="block";
+
+    }else{
+
+        alert("Wrong Password");
+
+    }
+
+}
+
+function uploadImage(){
+
+    let file=document.getElementById("file").files[0];
+
+    if(!file){
+
+        alert("Please Select Image");
+
+        return;
+
+    }
+
+    document.getElementById("status").innerHTML="Uploading...";
+
+    let fileName=Date.now()+"_"+file.name;
+
+    let storageRef=storage.ref("images/"+fileName);
+
+    storageRef.put(file)
+
+    .then(snapshot=>snapshot.ref.getDownloadURL())
+
+    .then(url=>{
+
+        return db.collection("images").add({
+
+            url:url,
+
+            time:Date.now()
+
+        });
+
+    })
+
+    .then(()=>{
+
+        document.getElementById("status").innerHTML="✅ Upload Successful";
+
+        document.getElementById("file").value="";
+
+        alert("Image Uploaded Successfully");
+
+    })
+
+    .catch(error=>{
+
+        console.log(error);
+
+        document.getElementById("status").innerHTML="❌ Upload Failed";
+
+        alert(error.message);
+
+    });
+
+}
+
+</script>
+
+    <!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAfdJVME0RchNtfkSTXX2X-03_9nnd4hvM",
+  authDomain: "mr-mahin-design.firebaseapp.com",
+  projectId: "mr-mahin-design",
+  storageBucket: "mr-mahin-design.firebasestorage.app",
+  messagingSenderId: "1461563320",
+  appId: "1:1461563320:web:150fdc92a4e7662585e94d",
+  measurementId: "G-8FJVMZB9JE"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+db.collection("images")
+.orderBy("time","desc")
+.onSnapshot(function(snapshot){
+
+    const gallery = document.getElementById("gallery");
+
+    gallery.innerHTML = "";
+
+    snapshot.forEach(function(doc){
+
+        const data = doc.data();
+
+        gallery.innerHTML += `
+            <img src="${data.url}">
+        `;
+
+    });
+
+});
+
+</script>
+</body>
+</html>
